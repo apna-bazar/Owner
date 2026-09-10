@@ -5,15 +5,51 @@ import Link from 'next/link';
 import {
   LayoutDashboard, ShoppingBag, ShoppingCart, Image as ImageIcon, 
   Film, Users, Settings, Plus, UploadCloud, Link2, 
-  MoreVertical, Edit, Trash2, Search, ArrowLeft,
-  CheckCircle2, AlertCircle, RotateCcw
+  MoreVertical, Edit, Trash2, ArrowLeft, AlertCircle, Menu, X
 } from 'lucide-react';
+
+// --- TYPESCRIPT INTERFACES (This fixes the build error) ---
+interface SidebarItemProps {
+  icon: React.ReactNode;
+  label: string;
+  isActive: boolean;
+  onClick: () => void;
+}
+
+interface StatCardProps {
+  title: string;
+  value: string;
+  subtitle: string;
+  trend: 'up' | 'down' | 'neutral';
+  isAlert?: boolean;
+}
+
+interface TransactionItemProps {
+  order: string;
+  amount: string;
+  status: string;
+  time: string;
+}
+
+interface TopProductItemProps {
+  name: string;
+  sales: string;
+  stock: string;
+  isOut?: boolean;
+}
+
+interface OrderTableRowProps {
+  id: string;
+  name: string;
+  amount: string;
+  date: string;
+  status: string;
+  isAlert?: boolean;
+}
 
 export default function MasterAdminPanel() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Reusable Image Upload Component State
   const [uploadMode, setUploadMode] = useState<'gallery' | 'url'>('gallery');
 
   // --- LUXURY THEME COLORS ---
@@ -21,7 +57,6 @@ export default function MasterAdminPanel() {
   const bgCard = 'bg-[#11131A]';
   const borderCol = 'border-[#222]';
   const textMain = 'text-white';
-  const textMuted = 'text-gray-400';
   const gold = 'text-[#D4AF37]';
   const bgGold = 'bg-gradient-to-r from-yellow-500 to-[#D4AF37]';
 
@@ -99,7 +134,6 @@ export default function MasterAdminPanel() {
               <div className="grid md:grid-cols-2 gap-6">
                  <div className={`p-6 rounded-2xl border ${borderCol} ${bgCard}`}>
                     <h3 className="font-bold text-sm tracking-widest uppercase mb-4 text-gray-400">Recent Transactions</h3>
-                    {/* Mock List */}
                     <div className="flex flex-col gap-4">
                       <TransactionItem order="#AB-1029" amount="₹4,999" status="Paid" time="2 mins ago" />
                       <TransactionItem order="#AB-1028" amount="₹1,299" status="Pending" time="15 mins ago" />
@@ -128,7 +162,7 @@ export default function MasterAdminPanel() {
                 </button>
               </div>
 
-              {/* ADD NEW PRODUCT FORM (Dual Upload UI) */}
+              {/* ADD NEW PRODUCT FORM */}
               <div className={`p-6 rounded-2xl border ${borderCol} ${bgCard} mb-8 shadow-xl`}>
                 <h3 className="font-bold text-sm tracking-widest uppercase mb-6 text-[#D4AF37]">Create New Product</h3>
                 
@@ -137,7 +171,6 @@ export default function MasterAdminPanel() {
                   <div>
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-3">Product Image / Video</label>
                     
-                    {/* Toggle Gallery vs URL */}
                     <div className="flex bg-[#08090C] p-1 rounded-xl mb-4 border border-[#222]">
                       <button onClick={() => setUploadMode('gallery')} className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${uploadMode === 'gallery' ? 'bg-[#D4AF37] text-black' : 'text-gray-500 hover:text-white'}`}>Gallery</button>
                       <button onClick={() => setUploadMode('url')} className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${uploadMode === 'url' ? 'bg-[#D4AF37] text-black' : 'text-gray-500 hover:text-white'}`}>Paste URL</button>
@@ -206,7 +239,6 @@ export default function MasterAdminPanel() {
                   </div>
                 </div>
               </div>
-
             </div>
           )}
 
@@ -279,9 +311,9 @@ export default function MasterAdminPanel() {
   );
 }
 
-// --- SUB-COMPONENTS FOR ADMIN UI ---
+// --- SUB-COMPONENTS WITH PROPER TYPES (Fixes the Build Error) ---
 
-function SidebarItem({ icon, label, isActive, onClick }: any) {
+function SidebarItem({ icon, label, isActive, onClick }: SidebarItemProps) {
   return (
     <button 
       onClick={onClick}
@@ -292,7 +324,7 @@ function SidebarItem({ icon, label, isActive, onClick }: any) {
   );
 }
 
-function StatCard({ title, value, subtitle, trend, isAlert }: any) {
+function StatCard({ title, value, subtitle, trend, isAlert }: StatCardProps) {
   return (
     <div className={`p-5 rounded-2xl border ${isAlert ? 'border-red-500/30 bg-red-950/10' : 'border-[#222] bg-[#11131A]'} flex flex-col`}>
       <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-2">{title}</span>
@@ -307,7 +339,7 @@ function StatCard({ title, value, subtitle, trend, isAlert }: any) {
   );
 }
 
-function TransactionItem({ order, amount, status, time }: any) {
+function TransactionItem({ order, amount, status, time }: TransactionItemProps) {
   return (
     <div className="flex items-center justify-between p-3 bg-[#08090C] rounded-xl border border-[#222]">
       <div>
@@ -322,7 +354,7 @@ function TransactionItem({ order, amount, status, time }: any) {
   );
 }
 
-function TopProductItem({ name, sales, stock, isOut }: any) {
+function TopProductItem({ name, sales, stock, isOut }: TopProductItemProps) {
   return (
     <div className="flex items-center justify-between p-3 bg-[#08090C] rounded-xl border border-[#222]">
       <div className="flex items-center gap-3">
@@ -337,7 +369,7 @@ function TopProductItem({ name, sales, stock, isOut }: any) {
   );
 }
 
-function OrderTableRow({ id, name, amount, date, status, isAlert }: any) {
+function OrderTableRow({ id, name, amount, date, status, isAlert }: OrderTableRowProps) {
   const statusColor = 
     status === 'Pending' ? 'text-yellow-400 bg-yellow-400/10' : 
     status === 'Shipped' ? 'text-blue-400 bg-blue-400/10' : 
